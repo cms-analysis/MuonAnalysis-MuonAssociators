@@ -12,20 +12,18 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 
 ### global tag
-#process.GlobalTag.globaltag = 'GR_R_35X_V7::All'
-process.GlobalTag.globaltag = 'GR10_E_V4::All'
+process.GlobalTag.globaltag = 'GR_R_35X_V7::All'
 
 ### source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
         #'rfio:/castor/cern.ch/user/g/gpetrucc/7TeV/DATA/Muons_With_HLTDEBUG.root' 
-        #'file:/afs/cern.ch/user/g/gpetrucc/scratch0/mu10/clean/CMSSW_3_5_6/src/hlt.root'
-        'rfio:/castor/cern.ch/user/g/gpetrucc/7TeV/DATA/Muons_With_HLTDEBUG_v9_Run134542_Ls44to52.root'
+        'file:/afs/cern.ch/user/g/gpetrucc/scratch0/mu10/clean/CMSSW_3_5_6/src/hlt.root'
     )
 )
 
 ### number of events
-process.maxEvents = cms.untracked.PSet( output = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 from HLTrigger.HLTfilters.hltLevel1GTSeed_cfi import hltLevel1GTSeed
 hltLevel1GTSeed.L1TechTriggerSeeding = cms.bool(True)
@@ -42,11 +40,7 @@ process.noScraping = cms.EDFilter("FilterOutScraping",
     numtrack = cms.untracked.uint32(10),
     thresh = cms.untracked.double(0.25)
 )
-#process.preFilter = cms.Sequence(process.bptxAnd * process.bscFilter * process.oneGoodVertexFilter * process.noScraping)
-process.preFilter = cms.Sequence(process.noScraping * process.oneGoodVertexFilter)
-process.test     = cms.Path(process.preFilter)
-process.testBPTX = cms.Path(process.preFilter + process.bptxAnd)
-process.testBSC  = cms.Path(process.preFilter + process.bscFilter)
+process.preFilter = cms.Sequence(process.bptxAnd * process.bscFilter * process.oneGoodVertexFilter * process.noScraping)
 
 process.load("MuonAnalysis.MuonAssociators.patMuonsWithTrigger_8E29_cff")
 from MuonAnalysis.MuonAssociators.patMuonsWithTrigger_8E29_cff import changeTriggerProcessName;
@@ -62,21 +56,6 @@ process.matchDebug = process.triggerMatcherToHLTDebug.clone()
 addUserData(process.patMuonsWithoutTrigger, "matchDebug")
 #process.matchDebug.l1matcherConfig.useTrack = 'global'
 #process.matchDebug.l1matcherConfig.useState = 'outermost'
-
-process.muonStations = cms.EDProducer("MuonStationCounter",
-    src = cms.InputTag("muons"),
-    useGlobalTrack = cms.bool(False)
-)
-process.patMuonsWithoutTrigger.userData.userInts.src += [
-    cms.InputTag("muonStations",""),
-    cms.InputTag("muonStations","any"),
-    cms.InputTag("muonStations","dt"),
-    cms.InputTag("muonStations","dtAny"),
-    cms.InputTag("muonStations","csc"),
-    cms.InputTag("muonStations","cscAny"),
-    cms.InputTag("muonStations","rpc"),
-    cms.InputTag("muonStations","rpcAny"),
-]
 
 ## Skimming: change to fit your requirement
 process.muonFilter = cms.EDFilter("PATMuonRefSelector", 
