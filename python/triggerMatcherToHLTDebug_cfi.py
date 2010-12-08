@@ -27,11 +27,6 @@ triggerMatcherToHLTDebug = cms.EDProducer("TriggerMatcherToHLTDebug",
     #FilteringL1
     MinL1Quality = cms.int32( 1 ),
 
-    #associationMap                                      
-    SeedMapTag = cms.InputTag( "hltL2Muons" ),
-
-
-
     #FilteringL2
     #PreviousCandTag_L2 = cms.InputTag( "hltL1SingleMu3L1Filtered0" ),
     MinN_L2 = cms.int32( 1 ),
@@ -39,7 +34,7 @@ triggerMatcherToHLTDebug = cms.EDProducer("TriggerMatcherToHLTDebug",
     MinNhits_L2 = cms.int32( 0 ),
     MaxDr_L2 = cms.double( 9999.0 ),
     MaxDz_L2 = cms.double( 9999.0 ),
-    MinPt_L2 = cms.double( 7.0 ),
+    MinPt_L2 = cms.double( 3.0 ),
     NSigmaPt_L2 = cms.double( 0.0 ),
 
     #PreviousCandTag_L3 = cms.InputTag( "hltSingleMu5L2Filtered4" ),
@@ -48,7 +43,7 @@ triggerMatcherToHLTDebug = cms.EDProducer("TriggerMatcherToHLTDebug",
     MinNhits_L3 = cms.int32( 0 ),
     MaxDr_L3 = cms.double( 2.0 ),
     MaxDz_L3 = cms.double( 9999.0 ),
-    MinPt_L3 = cms.double( 9.0 ),
+    MinPt_L3 = cms.double( 3.0 ),
     NSigmaPt_L3 = cms.double( 0.0 ),
 )
 
