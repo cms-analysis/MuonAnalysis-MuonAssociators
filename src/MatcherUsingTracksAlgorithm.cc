@@ -16,17 +16,6 @@
 #include "FWCore/Utilities/interface/Exception.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 
-// a few template-related workarounds
-namespace reco {
-template<>
-inline double deltaR<GlobalVector>(const GlobalVector &v1, const GlobalVector &v2) {
-    return deltaR<float>(v1.eta(),v1.phi(),v2.eta(),v2.phi());
-}
-template<>
-inline double deltaR2<GlobalVector>(const GlobalVector &v1, const GlobalVector &v2) {
-    return deltaR2<float>(v1.eta(),v1.phi(),v2.eta(),v2.phi());
-}
-}
 
 MatcherUsingTracksAlgorithm::MatcherUsingTracksAlgorithm(const edm::ParameterSet & iConfig) :
     whichTrack1_(None),     whichTrack2_(None), 
@@ -467,12 +456,12 @@ MatcherUsingTracksAlgorithm::getChi2(const FreeTrajectoryState &start, const Fre
 double
 MatcherUsingTracksAlgorithm::getChi2(const FreeTrajectoryState &start, const TrajectoryStateClosestToPoint &other, bool diagonalOnly, bool useVertex) {
     if (!start.hasError() && !other.hasError()) throw cms::Exception("LogicError") << "At least one of the two states must have errors to make chi2s.\n";
-    PerigeeConversions pgconvert; double pt; // needed by pgconvert
+    double pt; // needed by pgconvert
     AlgebraicSymMatrix55 cov;
-    if (start.hasError()) cov += pgconvert.ftsToPerigeeError(start).covarianceMatrix();
+    if (start.hasError()) cov += PerigeeConversions::ftsToPerigeeError(start).covarianceMatrix();
     if (other.hasError()) cov += other.perigeeError().covarianceMatrix();
     cropAndInvert(cov, diagonalOnly, !useVertex);
-    AlgebraicVector5 pgpar1 = pgconvert.ftsToPerigeeParameters(start,other.referencePoint(),pt).vector();
+    AlgebraicVector5 pgpar1 = PerigeeConversions::ftsToPerigeeParameters(start,other.referencePoint(),pt).vector();
     AlgebraicVector5 pgpar2 = other.perigeeParameters().vector();
     AlgebraicVector5 diff(pgpar1-pgpar2);
     return ROOT::Math::Similarity(diff, cov);
